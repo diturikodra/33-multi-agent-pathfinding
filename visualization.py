@@ -55,7 +55,6 @@ for (r, c) in obstacles:
     rect = patches.Rectangle((c - 0.5, r - 0.5), 1, 1, color='black')
     ax.add_patch(rect)
     
-
 for i, agent_data in enumerate(agents):
     agent_id = f'Agent{i}'
     color = colors[agent_id]
@@ -69,7 +68,7 @@ for i, agent_data in enumerate(agents):
     ax.plot(
         [goal_c], 
         [goal_r], 
-        marker='o',
+        marker='o',  # Rreth (Circle)
         markersize=16, 
         linestyle='',
         markeredgecolor=color, 
@@ -79,16 +78,26 @@ for i, agent_data in enumerate(agents):
     
 
 markers = {}
+trails = {} 
+
+# Inicializimi i Agjentëve dhe Vijave të Hijezimit
 for agent, path in agents_paths.items():
     r, c = path[0]
-    marker, = ax.plot([c], [r], 'o', color=colors[agent], markersize=15)
+    # Agjenti (zorder=3 për të qenë sipër gjurmës)
+    marker, = ax.plot([c], [r], 'o', color=colors[agent], markersize=15, zorder=3)
     markers[agent] = marker
+    
+    # Inicializimi i vijës së hijezimit (trail), fillimisht bosh
+    # Vija (zorder=2 për të qenë prapa agjentit)
+    trail, = ax.plot([], [], color=colors[agent], linewidth=2, linestyle='-', zorder=2, alpha=0.5)
+    trails[agent] = trail
 
 SUBSTEPS = 10
 
 max_segments = max(len(p) - 1 for p in agents_paths.values())
 
-total_frames = max_segments * SUBSTEPS + 1
+# Buffer kohor: siguron që vija e hijezimit të mbetet për pak kohë para se të fshihet
+total_frames = max_segments * SUBSTEPS + SUBSTEPS * 10 
 
 
 def interpolate(p0, p1, alpha):
@@ -101,30 +110,60 @@ def interpolate(p0, p1, alpha):
 
 def update(frame):
     # frame: 0 .. total_frames-1
+    changed_artists = [] 
+    
     for agent, path in agents_paths.items():
 
         segments = len(path) - 1
-        if segments <= 0:
-
-            r, c = path[0]
-            markers[agent].set_data([c], [r])
-            continue
-
+        
+        # Segmenti ku ndodhemi (indexi i rrugës)
         seg_idx = frame // SUBSTEPS
-
-        if seg_idx >= segments:
-            r, c = path[-1]
-            markers[agent].set_data([c], [r])
-            continue
-
+        
+        # Vlera interpoluese brenda segmentit
         alpha = (frame % SUBSTEPS) / SUBSTEPS
 
-        p0 = path[seg_idx]
-        p1 = path[seg_idx + 1]
-        r, c = interpolate(p0, p1, alpha)
+        # Llogaritja e pozicionit aktual (interpoluar)
+        if seg_idx >= segments:
+            # Agjenti ka arritur në destinacion, mbetet në vendin e fundit
+            r, c = path[-1]
+            
+        else:
+            # Agjenti është duke lëvizur
+            p0 = path[seg_idx]
+            p1 = path[seg_idx + 1]
+            r, c = interpolate(p0, p1, alpha)
+        
         markers[agent].set_data([c], [r])
+        changed_artists.append(markers[agent]) 
 
-    return list(markers.values())
+        
+        # LOGJIKA E VIJËS SË HIJEZIMIT (TRAIL)
+        if seg_idx < segments:
+            # Agjenti është duke lëvizur: vizatojmë path-in e plotë deri në pikën aktuale
+            
+            # Pikat e kaluara (koordinatat e qendrës së qelizave)
+            trail_r = [p[0] for p in path[:seg_idx + 1]]
+            trail_c = [p[1] for p in path[:seg_idx + 1]]
+            
+            # Pozicioni aktual (koordinatat e interpoluara)
+            trail_r.append(r)
+            trail_c.append(c)
+            
+            trails[agent].set_data(trail_c, trail_r)
+        
+        elif seg_idx >= segments and frame <= max_segments * SUBSTEPS:
+             # Agjenti ka arritur, vija mbetet e plotë në destinacion gjatë kohës së buffer-it
+             trail_r = [p[0] for p in path]
+             trail_c = [p[1] for p in path]
+             trails[agent].set_data(trail_c, trail_r)
+             
+        elif frame > max_segments * SUBSTEPS:
+            # Pas kohës së buffer-it, vija hiqet
+            trails[agent].set_data([], [])
+
+        changed_artists.append(trails[agent]) 
+    # Kthehen të gjithë artistët e ndryshuar (kërkohet nga blit=True)
+    return changed_artists 
 
 
 ani = FuncAnimation(
@@ -132,8 +171,8 @@ ani = FuncAnimation(
     update,
     frames=total_frames,
     interval=50,
-    blit=False,
-    repeat=True
+    blit=True,     # Përdorim blit=True për performancë më të mirë me gjurmët (trails)
+    repeat=True   # Ndalon animacionin pasi të ketë mbaruar
 )
 
 plt.show()
