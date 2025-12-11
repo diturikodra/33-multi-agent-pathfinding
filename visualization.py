@@ -54,6 +54,29 @@ ax.grid(True)
 for (r, c) in obstacles:
     rect = patches.Rectangle((c - 0.5, r - 0.5), 1, 1, color='black')
     ax.add_patch(rect)
+    
+
+for i, agent_data in enumerate(agents):
+    agent_id = f'Agent{i}'
+    color = colors[agent_id]
+    
+    # Start Point (S)
+    start_r, start_c = agent_data["start"]
+    ax.text(start_c, start_r, 'S', color=color, fontsize=12, fontweight='bold', ha='center', va='center')
+    
+    # Goal Point (Vijë Rrethore)
+    goal_r, goal_c = agent_data["goal"]
+    ax.plot(
+        [goal_c], 
+        [goal_r], 
+        marker='o',
+        markersize=16, 
+        linestyle='',
+        markeredgecolor=color, 
+        markeredgewidth=2,     
+        markerfacecolor='none' 
+    )
+    
 
 markers = {}
 for agent, path in agents_paths.items():
