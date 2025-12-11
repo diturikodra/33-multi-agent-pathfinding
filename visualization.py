@@ -7,13 +7,15 @@ from matplotlib.animation import FuncAnimation
     # 0 = qelizë e lirë
     # 1 = pengesë
 
-rows, cols = 5, 5
+rows, cols = 7, 5
 grid = [
     [0, 0, 0, 0, 0],
     [0, 0, 1, 0, 0],
     [0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0]
+    [0, 1, 0, 1, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1]
 ]
 
 obstacles = [(r, c) for r in range(rows) for c in range(cols) if grid[r][c] == 1]
@@ -22,6 +24,13 @@ agents = [
     {"start": (0, 0), "goal": (2, 4)},
     {"start": (4, 4), "goal": (0, 2)},
     {"start": (2, 1), "goal": (0, 1)},
+    {"start": (1, 1), "goal": (4, 4)},
+    {"start": (3, 0), "goal": (0, 4)},
+    {"start": (0, 4), "goal": (4, 0)},
+    {"start": (4, 0), "goal": (3, 4)},
+    {"start": (2, 2), "goal": (4, 2)},
+    {"start": (6, 0), "goal": (0, 0)}
+
 ]
 
 paths = cooperative_astar(agents, grid)
@@ -31,7 +40,7 @@ if paths is None:
     exit()
 
 agents_paths = {f'Agent{i}': path for i, path in enumerate(paths)}
-colors = {'Agent0': 'blue', 'Agent1': 'red', 'Agent2': 'green'}
+colors = {'Agent0': 'blue', 'Agent1': 'red', 'Agent2': 'green', 'Agent3': 'orange', 'Agent4': 'purple', 'Agent5': 'cyan', 'Agent6': 'magenta', 'Agent7': 'yellow', 'Agent8': 'brown'}
 
 fig, ax = plt.subplots()
 ax.set_xlim(-0.5, cols - 0.5)
