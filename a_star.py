@@ -1,8 +1,3 @@
-# a_star.py
-# ---------------------------------------------------------
-# Implementim i pastër i A* për një agjent në një grid 2D.
-# ---------------------------------------------------------
-
 import heapq
 
 # Heuristika: Manhattan distance (përshtatshme për grid 4-directional)
@@ -28,9 +23,8 @@ def get_neighbors(node, grid):
     return neighbors
 
 
-# ---------------------------------------------------------
 # A* algorithm
-# ---------------------------------------------------------
+
 def a_star(start, goal, grid):
     # Open list = priority queue (heap)
     open_set = []
@@ -84,9 +78,6 @@ def reconstruct_path(came_from, current):
     return path
 
 
-# ---------------------------------------------------------
-# Test i thjeshtë (mund ta fshish)
-# ---------------------------------------------------------
 if __name__ == "__main__":
 
     grid = [
