@@ -46,6 +46,30 @@ for path in paths:
     while len(path) < max_len:
         path.append(last)
 
+print("\n=== Pozicionet e agjentëve në çdo hap kohe (t) ===\n")
+
+num_agents = len(paths)
+
+for t in range(max_len):
+    print(f"Hapi t = {t}:")
+    positions_this_t = {}  # pos -> lista e agjentëve që janë aty
+
+    for i, path in enumerate(paths):
+        pos = path[t]  # pozicioni i agjentit i në kohën t
+        print(f"  Agjenti {i}: {pos}")
+
+        # ruaj pozicionet për të kontrolluar konflikte
+        if pos not in positions_this_t:
+            positions_this_t[pos] = []
+        positions_this_t[pos].append(i)
+
+    # kontrollo konflikte vertex
+    for pos, agents_here in positions_this_t.items():
+        if len(agents_here) > 1:
+            print(f"  >>> KONFLIKT! Qeliza {pos} përdoret nga agjentët {agents_here} në t={t}")
+
+    print()  # rresht bosh për lexim më të mirë
+
 
 
 agents_paths = {f'Agent{i}': path for i, path in enumerate(paths)}
