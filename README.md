@@ -50,3 +50,5 @@ Vizualizimi jep një animacion dinamik, duke shfaqur: pozicionet fillestare (S),
 ```
 
 ---
+
+![Screen Recording 2025-12-12 at 16 57 11](https://github.com/user-attachments/assets/6a847d51-7644-48d0-8cb3-ef9166de2181)
