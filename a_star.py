@@ -23,8 +23,6 @@ def get_neighbors(node, grid):
     return neighbors
 
 
-# A* algorithm
-
 def a_star(start, goal, grid):
     # Open list = priority queue (heap)
     open_set = []
@@ -64,9 +62,7 @@ def a_star(start, goal, grid):
     return None
 
 
-# ---------------------------------------------------------
-# Funksion ndihmës që rindërton rrugën nga came_from[]
-# ---------------------------------------------------------
+
 def reconstruct_path(came_from, current):
     path = [current]
 
@@ -91,3 +87,4 @@ if __name__ == "__main__":
 
     path = a_star(start, goal, grid)
     print("Path:", path)
+

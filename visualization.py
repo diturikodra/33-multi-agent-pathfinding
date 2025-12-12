@@ -28,8 +28,8 @@ agents = [
     {"start": (3, 0), "goal": (0, 4)},
     {"start": (0, 4), "goal": (4, 0)},
     {"start": (4, 0), "goal": (3, 4)},
-    {"start": (2, 2), "goal": (4, 2)},
-    {"start": (6, 0), "goal": (0, 0)}
+    {"start": (6, 0), "goal": (0, 0)},
+    {"start": (6, 2), "goal": (2, 3)}
 
 ]
 
@@ -39,8 +39,17 @@ if paths is None:
     print("Nuk mund të gjenin rrugë për të gjithë agjentët!")
     exit()
 
+max_len = max(len(path) for path in paths)
+
+for path in paths:
+    last = path[-1]
+    while len(path) < max_len:
+        path.append(last)
+
+
+
 agents_paths = {f'Agent{i}': path for i, path in enumerate(paths)}
-colors = {'Agent0': 'blue', 'Agent1': 'red', 'Agent2': 'green', 'Agent3': 'orange', 'Agent4': 'purple', 'Agent5': 'cyan', 'Agent6': 'magenta', 'Agent7': 'yellow', 'Agent8': 'brown'}
+colors = {'Agent0': 'blue', 'Agent1': 'red', 'Agent2': 'green', 'Agent3': 'orange', 'Agent4': 'purple', 'Agent5': 'cyan', 'Agent6': 'magenta', 'Agent7': 'yellow','Agent8': 'brown'}
 
 fig, ax = plt.subplots()
 ax.set_xlim(-0.5, cols - 0.5)
